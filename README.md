@@ -23,17 +23,17 @@ This project demonstrates how to:
 
 ## Project Structure
 
-churn-prediction/
-├── notebooks/
-│ └── churn_logreg_mysql.ipynb # Main notebook with workflow
-├── data/ # Local datasets (ignored by git)
-├── .env.example # Example database credentials
-├── .gitignore # Ignores secrets, data, caches
-├── requirements.txt # Minimal dependencies
-├── requirements-lock.txt # Fully pinned dependencies
-├── environment.yml # Conda environment configuration
-├── .gitattributes # Line ending normalization
-└── README.md
+churn-prediction/  
+├── notebooks/  
+│ └── churn_logreg_mysql.ipynb # Main notebook with workflow  
+├── data/ # Local datasets (ignored by git)  
+├── .env.example # Example database credentials  
+├── .gitignore # Ignores secrets, data, caches  
+├── requirements.txt # Minimal dependencies  
+├── requirements-lock.txt # Fully pinned dependencies  
+├── environment.yml # Conda environment configuration  
+├── .gitattributes # Line ending normalization  
+└── README.md  
 
 
 ---
