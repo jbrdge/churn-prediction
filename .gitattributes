@@ -1,8 +1,57 @@
-# Auto-detect text files and ensure LF line endings
+# --- Normalize line endings (default to LF) ---
 * text=auto eol=lf
 
-# Jupyter notebooks
+# --- Languages / file types ---
+# Python
+*.py text eol=lf
+*.pyw text eol=lf
+
+# Jupyter Notebooks (text mode so diffs work, LF endings)
 *.ipynb text eol=lf
 
-# Windows batch files should keep CRLF
+# Markdown / docs
+*.md text eol=lf
+*.rst text eol=lf
+*.txt text eol=lf
+
+# Configs
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.ini text eol=lf
+*.env text eol=lf
+*.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Windows scripts keep CRLF
 *.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# SQL
+*.sql text eol=lf
+
+# CSV / TSV as text (LF). If you prefer treat as binary to avoid diffs, uncomment the binary lines below.
+*.csv text eol=lf
+*.tsv text eol=lf
+# *.csv binary
+# *.tsv binary
+
+# Images / binaries (no line ending conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg text eol=lf
+*.pdf binary
+*.zip binary
+*.gz binary
+*.bz2 binary
+*.7z binary
+*.pkl binary
+
+# Notebooks checkpoints (if committed)
+.ipynb_checkpoints/* text eol=lf
