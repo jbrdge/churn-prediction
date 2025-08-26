@@ -55,3 +55,6 @@
 
 # Notebooks checkpoints (if committed)
 .ipynb_checkpoints/* text eol=lf
+*.ipynb	diff=jupyternotebook
+
+*.ipynb	merge=jupyternotebook
