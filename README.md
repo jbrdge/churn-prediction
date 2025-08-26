@@ -88,3 +88,22 @@ pip install -r requirements.txt
 conda env create -f environment.yml
 conda activate churn-env
 ```
+
+
+### Database Setup (prerequisite)
+Before running the notebook, prepare the database:
+
+1. Create schema and customers table:
+   ```bash
+   mysql -u churn -p < sql/00_schema.sql
+   ```
+
+2. Load the raw churn dataset into MySQL:
+   ```bash
+   bash scripts/load_csv.sh
+   ```
+
+3. Run post-load transformations to build the clean table:
+   ```bash
+   mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
+   ```
