@@ -135,9 +135,3 @@ Perfect for showcasing applied data analysis + engineering skills to employers.
 EOF
 
 
-Then commit and push:
-
-```bash
-git add README.md
-git commit -m "Add README with project overview and setup"
-git push origin main
