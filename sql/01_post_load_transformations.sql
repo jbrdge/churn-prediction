@@ -33,7 +33,7 @@ SELECT
 FROM customers;
 
 -- Rule-based score for comparison with ML
-ALTER TABLE customers_clean ADD COLUMN IF NOT EXISTS churn_score FLOAT;
+ALTER TABLE customers_clean ADD COLUMN churn_score FLOAT;;
 UPDATE customers_clean
 SET churn_score =
   (CASE WHEN is_monthly = 1 THEN 0.45 ELSE 0 END) +
