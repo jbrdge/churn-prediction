@@ -3,7 +3,7 @@ A reproducible machine learning project that predicts customer churn using logis
 ---
 
 ## Project Overview
-Customer churn is a critical business problem — retaining existing customers is often more cost-effective than acquiring new ones.  
+Customer churn is a critical business problem; retaining existing customers is often more cost-effective than acquiring new ones.  
 This project demonstrates how to:
 - Ingest and clean churn data in **MySQL**  
 - Train and evaluate a **logistic regression model** in Python  
@@ -24,19 +24,19 @@ This project demonstrates how to:
 ## Project Structure
 
 churn-prediction/  
-├── data/ # Local datasets 
-│ └── Telco-Customer-Churn.csv # Public Kaggle Dataset
+├── data/ # Local datasets  
+│ └── Telco-Customer-Churn.csv # Public Kaggle Dataset  
 ├── notebooks/  
-│ └── churn_regression.ipynb # Main notebook with workflow  
-├── scripts/
-│ └── load_csv.sh
-├── sql/
-│ ├── archive/
-│ │ └── telco_churn_database.sql
-│ ├── 00_schema.sql
-│ └── 01_post_load_transformations.sql
-├── .env.example # Example database credentials  
-├── .gitattributes # Line ending normalization 
+│ └── churn_regression.ipynb # Main notebook with workflow   
+├── scripts/  
+│ └── load_csv.sh  
+├── sql/  
+│ ├── archive/  
+│ │ └── telco_churn_database.sql  
+│ ├── 00_schema.sql  
+│ └── 01_post_load_transformations.sql  
+├── .env.example # Example database credentials    
+├── .gitattributes # Line ending normalization   
 ├── .gitignore # Ignores secrets, data, caches  
 ├── environment.yml # Conda environment configuration  
 ├── README.md  
