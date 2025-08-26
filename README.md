@@ -6,9 +6,6 @@ A reproducible machine learning project that predicts customer churn using logis
 Customer churn is a critical business problem; retaining existing customers is often more cost-effective than acquiring new ones.  
 This project demonstrates how to:
 - Ingest and clean churn data in **MySQL**  
-- Train and evaluate a **logistic regression model** in Python  
-- Write churn probabilities back to the database  
-- Export results for visualization in **Tableau**  
 
 ---
 
@@ -86,13 +83,6 @@ Running the Notebook
 
         Loads churn data
 
-        Fits logistic regression
-
-        Evaluates performance (AUC, precision/recall)
-
-        Writes churn probabilities back to MySQL
-
-        Exports a CSV (churn_predictions.csv)
 
 Visualization in Tableau
 
@@ -118,20 +108,9 @@ Security
 
     Database passwords are never exposed in the notebook.
 
-Next Steps
-
-    Extend features (payment method, internet service, contract type).
-
-    Add one-hot encoding for categorical variables.
-
-    Compare logistic regression against tree-based models.
-
-    Implement cross-validation and hyperparameter tuning.
 
 About
-
 Customer Churn Prediction — an end-to-end data project demonstrating SQL integration, machine learning, and visualization best practices.
-Perfect for showcasing applied data analysis + engineering skills to employers.
-EOF
+
 
 
