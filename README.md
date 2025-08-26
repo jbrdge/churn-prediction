@@ -24,17 +24,24 @@ This project demonstrates how to:
 ## Project Structure
 
 churn-prediction/  
-├── notebooks/  
-│ └── churn_logreg_mysql.ipynb # Main notebook with workflow  
 ├── data/ # Local datasets 
-│ └── churn_logreg_mysql.ipynb # Main notebook with workflow  
+│ └── Telco-Customer-Churn.csv # Public Kaggle Dataset
+├── notebooks/  
+│ └── churn_regression.ipynb # Main notebook with workflow  
+├── scripts/
+│ └── load_csv.sh
+├── sql/
+│ ├── archive/
+│ │ └── telco_churn_database.sql
+│ ├── 00_schema.sql
+│ └── 01_post_load_transformations.sql
 ├── .env.example # Example database credentials  
+├── .gitattributes # Line ending normalization 
 ├── .gitignore # Ignores secrets, data, caches  
-├── requirements.txt # Minimal dependencies  
-├── requirements-lock.txt # Fully pinned dependencies  
 ├── environment.yml # Conda environment configuration  
-├── .gitattributes # Line ending normalization  
-└── README.md  
+├── README.md  
+├── requirements.txt # Minimal dependencies  
+└── requirements-lock.txt # Fully pinned dependencies 
 
 
 ---
