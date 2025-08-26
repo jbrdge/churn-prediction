@@ -3,3 +3,7 @@
 
 # Ignore zip files
 .zip
+
+# Data
+/data/*
+!/data/archive/*
