@@ -1,4 +1,4 @@
-#!/home/jacob/projects/my-churn/.venv/bin/python3.12
+#!/home/jacob/projects/churn-prediction/.venv/bin/python3.12
 import sys
 from send2trash.__main__ import main
 if __name__ == '__main__':

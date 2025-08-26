@@ -1,2 +1,5 @@
 # Ignore secrets
 .env
+
+# Ignore zip files
+.zip

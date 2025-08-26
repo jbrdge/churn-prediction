@@ -26,7 +26,8 @@ This project demonstrates how to:
 churn-prediction/  
 ├── notebooks/  
 │ └── churn_logreg_mysql.ipynb # Main notebook with workflow  
-├── data/ # Local datasets (ignored by git)  
+├── data/ # Local datasets 
+│ └── churn_logreg_mysql.ipynb # Main notebook with workflow  
 ├── .env.example # Example database credentials  
 ├── .gitignore # Ignores secrets, data, caches  
 ├── requirements.txt # Minimal dependencies  
