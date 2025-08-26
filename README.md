@@ -28,24 +28,24 @@ This project shows how to:
 
 ## Project Structure
 
-churn-prediction/
-├── data/
-│ └── Telco-Customer-Churn.csv
-├── notebooks/
-│ └── churn_regression.ipynb
-├── scripts/
-│ └── load_csv.sh
-├── sql/
-│ ├── archive/
-│ │ └── telco_churn_database.sql
-│ ├── 00_schema.sql
-│ └── 01_post_load_transformations.sql
-├── .env.example
-├── .gitignore
-├── environment.yml
-├── requirements.txt
-├── requirements-lock.txt
-└── README.md
+churn-prediction/  
+├── data/  
+│ └── Telco-Customer-Churn.csv  
+├── notebooks/  
+│ └── churn_regression.ipynb  
+├── scripts/  
+│ └── load_csv.sh  
+├── sql/  
+│ ├── archive/  
+│ │ └── telco_churn_database.sql  
+│ ├── 00_schema.sql  
+│ └── 01_post_load_transformations.sql  
+├── .env.example  
+├── .gitignore  
+├── environment.yml  
+├── requirements.txt  
+├── requirements-lock.txt  
+└── README.md  
 
 
 ## Setup
