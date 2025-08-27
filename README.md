@@ -106,7 +106,6 @@ Before running the notebook, prepare the database:
 3. Run post-load transformations to build the clean table:
    ```bash
    mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
-   ```
    
 4. Optional: SQL Sanity Checks and Baseline Scoring
 
@@ -115,7 +114,7 @@ Before running the notebook, prepare the database:
     ```bash
     mysql -u churn -p churn_project < sql/02_sanity_checks_and_baseline.sql
     ```
-    
+
 ### Troubleshooting
 ```
 ERROR 3948 (42000) at line 2: Loading local data is disabled; this must be enabled on both the client and server sides
@@ -146,5 +145,4 @@ sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 +---------------+-------+
 | local_infile  | ON   |
 +---------------+-------+
-
 ```
