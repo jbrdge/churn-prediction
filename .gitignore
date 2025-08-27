@@ -17,6 +17,7 @@ data/*.csv
 !data/README.md          # allow small docs to describe data
 
 # Model binaries
+notebooks/artifacts/logreg_pipeline.joblib
 notebooks/artifacts/*.joblib
 notebooks/artifacts/*.pkl
 notebooks/artifacts/*.h5
