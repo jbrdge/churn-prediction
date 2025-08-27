@@ -110,8 +110,41 @@ Before running the notebook, prepare the database:
 
 4. Optional: SQL Sanity Checks and Baseline Scoring
 
-You can run additional queries to sanity-check the data and create a simple SQL-only churn score:
+    You can run additional queries to sanity-check the data and create a simple SQL-only churn score:
 
+    ```bash
+    mysql -u churn -p churn_project < sql/02_sanity_checks_and_baseline.sql
+    ```
+    
+### Troubleshooting
+```
+ERROR 3948 (42000) at line 2: Loading local data is disabled; this must be enabled on both the client and server sides
+```
+To fix this error run:
 ```bash
-mysql -u churn -p churn_project < sql/02_sanity_checks_and_baseline.sql
+sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
+```
+You may see
+```
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | OFF   |
++---------------+-------+
+```
+Then run
+```bash
+sudo mysql -e "SET GLOBAL local_infile = 1;"
+```
+Check:
+```bash
+sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
+```
+```
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | ON   |
++---------------+-------+
+
 ```
