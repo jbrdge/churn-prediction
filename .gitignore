@@ -4,9 +4,9 @@
 # Ignore zip files
 .zip
 
-# Data
+# Data outputs
 /data/*
-!/data/archive/*
+!data/*_latest.csv
 
 #Ignore Venv
 .venv
