@@ -17,12 +17,12 @@ data/*.csv
 !data/README.md          # allow small docs to describe data
 
 # Model binaries
-artifacts/*.joblib
-artifacts/*.pkl
-artifacts/*.h5
+notebooks/artifacts/*.joblib
+notebooks/artifacts/*.pkl
+notebooks/artifacts/*.h5
 
 # Model metadata: keep JSON cards under version control
-!artifacts/*.json
+!notebooks/artifacts/*.json
 
 # -------------------
 # Jupyter & Python

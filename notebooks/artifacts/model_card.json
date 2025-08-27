@@ -1,5 +1,5 @@
 {
-  "created_utc": "2025-08-26T17:15:48.038389Z",
+  "created_utc": "2025-08-26T20:41:16.046574Z",
   "model": "LogisticRegression + OneHotEncoder",
   "python": "Python 3.12.11",
   "features": [
