@@ -107,3 +107,11 @@ Before running the notebook, prepare the database:
    ```bash
    mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
    ```
+
+4. Optional: SQL Sanity Checks and Baseline Scoring
+
+You can run additional queries to sanity-check the data and create a simple SQL-only churn score:
+
+```bash
+mysql -u churn -p churn_project < sql/02_sanity_checks_and_baseline.sql
+```
