@@ -107,3 +107,35 @@ Before running the notebook, prepare the database:
    ```bash
    mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
    ```
+
+### Troubleshooting
+```
+ERROR 3948 (42000) at line 2: Loading local data is disabled; this must be enabled on both the client and server sides
+```
+To fix this error run:
+```bash
+sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
+```
+You may see
+```
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | OFF   |
++---------------+-------+
+```
+Then run
+```bash
+sudo mysql -e "SET GLOBAL local_infile = 1;"
+```
+Check:
+```bash
+sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
+```
+```
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| local_infile  | ON   |
++---------------+-------+
+```
