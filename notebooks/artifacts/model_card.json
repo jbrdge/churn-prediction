@@ -1,0 +1,16 @@
+{
+  "created_utc": "2025-08-27T00:13:06.701725Z",
+  "model": "LogisticRegression + OneHotEncoder",
+  "python": "Python 3.12.11",
+  "features": [
+    "is_monthly",
+    "auto_pay",
+    "short_tenure",
+    "tenure",
+    "MonthlyCharges",
+    "Contract",
+    "PaymentMethod",
+    "gender",
+    "age_group"
+  ]
+}
