@@ -4,9 +4,35 @@
 # Ignore zip files
 .zip
 
-# Data
-/data/*
-!/data/archive/*
-
 #Ignore Venv
 .venv
+
+# -------------------
+# Data & Artifacts
+# -------------------
+
+# Raw/derived data exports
+data/*.csv
+!data/*latest.csv 
+!data/README.md          # allow small docs to describe data
+
+# Model binaries
+notebooks/artifacts/logreg_pipeline.joblib
+notebooks/artifacts/*.joblib
+notebooks/artifacts/*.pkl
+notebooks/artifacts/*.h5
+
+# Model metadata: keep JSON cards under version control
+!notebooks/artifacts/*.json
+
+# -------------------
+# Jupyter & Python
+# -------------------
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
