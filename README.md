@@ -132,8 +132,10 @@ Check:
 ```bash
 sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 ```
+```
 +---------------+-------+
 | Variable_name | Value |
 +---------------+-------+
 | local_infile  | ON   |
 +---------------+-------+
+```
