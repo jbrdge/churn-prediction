@@ -4,9 +4,33 @@
 # Ignore zip files
 .zip
 
-# Data outputs
-/data/*
-!data/*_latest.csv
-
 #Ignore Venv
 .venv
+
+# -------------------
+# Data & Artifacts
+# -------------------
+
+# Raw/derived data exports
+data/*.csv
+!data/README.md          # allow small docs to describe data
+
+# Model binaries
+artifacts/*.joblib
+artifacts/*.pkl
+artifacts/*.h5
+
+# Model metadata: keep JSON cards under version control
+!artifacts/*.json
+
+# -------------------
+# Jupyter & Python
+# -------------------
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
