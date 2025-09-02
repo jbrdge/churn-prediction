@@ -34,7 +34,7 @@ SELECT
     auto_pay,
     CASE WHEN tenure < 12 THEN 1 ELSE 0 END AS short_tenure,
     churn
-INTO OUTFILE '/var/lib/mysql-files/churn_regression.csv'  -- adjust path per your setup
+INTO OUTFILE '/data/churn_regression.csv'
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -44,3 +44,4 @@ FROM customers_clean;
 CREATE USER 'churn'@'%' IDENTIFIED BY 'churnpw';
 GRANT ALL PRIVILEGES ON churn_project.* TO 'churn'@'%';
 FLUSH PRIVILEGES;
+
