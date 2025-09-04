@@ -1,4 +1,5 @@
 # Customer Churn Prediction
+
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -62,6 +63,15 @@ churn-prediction/
 ├── requirements-lock.txt
 └── README.md
 ```
+
+---
+
+## Visualizations
+A Tableau Public dashboard will be published here once available.  
+Planned deliverables for `v0.6.0`:
+- Interactive churn risk dashboard
+- Customer segmentation breakdown
+- Revenue impact analysis
 
 ---
 
@@ -155,3 +165,11 @@ sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 
 - ⏳ [0.5.0] – Baseline Model
    Planned: provide baseline churn model CLI, save artifacts and metrics.
+
+- ⏳ [0.6.0] – Tableau Dashboard  
+  Planned: publish Tableau Public dashboard and link it from README.
+
+
+---
+## License
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
