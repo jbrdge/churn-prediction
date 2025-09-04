@@ -13,14 +13,24 @@ _What does this PR do? Provide a 1–2 sentence overview._
 - Key metrics, plots, or file outputs expected from this PR
 - Example: “AUC ~0.80 on test set, churn_predictions.csv created”
 
+## Validation
+- How to confirm the outputs are correct and no regressions were introduced
+
 ## Acceptance Criteria
 - [ ] Feature works as described
-- [ ] Notebook runs top-to-bottom on a fresh database
+- [ ] Runs top-to-bottom on a fresh database/env
 - [ ] No sensitive information committed
 - [ ] Documentation/markdown cells updated if needed
 
 ## Checklist
 - [ ] Code/SQL formatted and readable
-- [ ] Outputs cleared from notebooks before commit
+- [ ] Outputs cleared from notebooks before commit (if any)
 - [ ] Tests or sanity checks included where applicable
-- [ ] README remains accurate (if changed, update it in this PR)
+- [ ] README and CHANGELOG remain accurate
+- [ ] Branch protection respected (merge via PR, squash enabled)
+
+---
+
+## Roadmap
+_Which milestone/release is this part of? How does it fit into the overall plan?_
+- Example: This PR completes `v0.2.0 – Repo Structure` (introducing Python/SQL layout and env templates).

@@ -1,4 +1,8 @@
 # Customer Churn Prediction
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+
 
 An end-to-end workflow for predicting customer churn. Data is ingested and cleaned in **MySQL**, modeled in **Python**, and prepared for visualization in **Tableau**.
 
@@ -29,37 +33,37 @@ This project shows how to:
 https://www.kaggle.com/datasets/blastchar/telco-customer-churn  
 
 ### Context
-The data set includes information about:  
-  
-    Customers who left within the last month – the column is called Churn  
-    Services that each customer has signed up for – phone, multiple lines, internet, online security, online backup, device protection, tech support, and streaming TV and movies  
-    Customer account information – how long they’ve been a customer, contract, payment method, paperless billing, monthly charges, and total charges  
-    Demographic info about customers – gender, age range, and if they have partners and dependents  
-
+The dataset includes information about:  
+- Customers who left within the last month (column: `Churn`)  
+- Services each customer has signed up for (phone, internet, streaming, etc.)  
+- Account information (tenure, contract, billing, charges)  
+- Demographic information (gender, age, partners, dependents)  
 
 ---
 
 ## Project Structure
+```
+churn-prediction/
+├── data/
+│ └── Telco-Customer-Churn.csv
+├── notebooks/
+│ └── churn_regression.ipynb
+├── scripts/
+│ └── load_csv.sh
+├── sql/
+│ ├── archive/
+│ │ └── telco_churn_database.sql
+│ ├── 00_schema.sql
+│ └── 01_post_load_transformations.sql
+├── .env.example
+├── .gitignore
+├── environment.yml
+├── requirements.txt
+├── requirements-lock.txt
+└── README.md
+```
 
-churn-prediction/  
-├── data/  
-│ └── Telco-Customer-Churn.csv  
-├── notebooks/  
-│ └── churn_regression.ipynb  
-├── scripts/  
-│ └── load_csv.sh  
-├── sql/  
-│ ├── archive/  
-│ │ └── telco_churn_database.sql  
-│ ├── 00_schema.sql  
-│ └── 01_post_load_transformations.sql  
-├── .env.example  
-├── .gitignore  
-├── environment.yml  
-├── requirements.txt  
-├── requirements-lock.txt  
-└── README.md  
-
+---
 
 ## Setup
 
@@ -89,60 +93,65 @@ conda env create -f environment.yml
 conda activate churn-env
 ```
 
+#### (Optional, for legacy notebook only)
+```bash
+python -m ipykernel install --user --name churn-wsl --display-name "Python (churn-wsl)"
+```
 
-### Database Setup (prerequisite)
+---
+
+## Database Setup (prerequisite)
 Before running the notebook, prepare the database:
 
 1. Create schema and customers table:
-   ```bash
-   mysql -u churn -p < sql/00_schema.sql
-   ```
-
+```bash
+mysql -u churn -p < sql/00_schema.sql
+```
 2. Load the raw churn dataset into MySQL:
-   ```bash
-   bash scripts/load_csv.sh
-   ```
+```bash
+bash scripts/load_csv.sh
+```
 
 3. Run post-load transformations to build the clean table:
-   ```bash
-   mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
-   
-4. Optional: SQL Sanity Checks and Baseline Scoring
+```bash
+mysql -u churn -p churn_project < sql/01_post_load_transformations.sql
+```
 
-    You can run additional queries to sanity-check the data and create a simple SQL-only churn score:
+---
 
-    ```bash
-    mysql -u churn -p churn_project < sql/02_sanity_checks_and_baseline.sql
-    ```
-
-### Troubleshooting
+## Troubleshooting
 ```
 ERROR 3948 (42000) at line 2: Loading local data is disabled; this must be enabled on both the client and server sides
 ```
+
 To fix this error run:
 ```bash
 sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 ```
-You may see
-```
-+---------------+-------+
-| Variable_name | Value |
-+---------------+-------+
-| local_infile  | OFF   |
-+---------------+-------+
-```
-Then run
+If local_infile is OFF, enable it:
 ```bash
 sudo mysql -e "SET GLOBAL local_infile = 1;"
 ```
-Check:
+Confirm:
 ```bash
 sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 ```
-```
-+---------------+-------+
-| Variable_name | Value |
-+---------------+-------+
-| local_infile  | ON   |
-+---------------+-------+
-```
+
+---
+
+## Roadmap
+
+- ✅ [0.1.0] – Stabilized Baseline
+   Pre-release baseline with cleanup, legacy notebook archived, and changelog introduced.
+
+- ⏳ [0.2.0] – Repo Structure
+   Planned: introduce clear Python/SQL repo layout and env templates.
+
+- ⏳ [0.3.0] – Docker Compose
+   Planned: add Dockerfile + docker-compose.yml with health checks and Makefile targets.
+
+- ⏳ [0.4.0] – SQL ETL
+   Planned: implement SQL schema + ETL loader.
+
+- ⏳ [0.5.0] – Baseline Model
+   Planned: provide baseline churn model CLI, save artifacts and metrics.
