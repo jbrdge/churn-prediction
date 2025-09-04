@@ -21,23 +21,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses
 
 ### Notes
 - Pre-release baseline before code-first + Docker restructure
-- Roadmap: `ops/repo-structure` → `ops/docker-compose` → `feat/sql-etl` → `feat/model-baseline`
+- Roadmap: `ops/repo-structure` → `ops/docker-compose` → `feat/sql-etl` → `feat/model-baseline` → `viz/tableau-dashboard`
 
 ---
 
-# Roadmap
+## [0.2.0] - Unreleased
+### Planned
+- Introduce clear Python/SQL repo structure
+- Add env templates
 
-- ✅ **[0.1.0] – Stabilized Baseline**  
-  Pre-release baseline with cleanup, legacy notebook archived, and changelog introduced.
+---
 
-- ⏳ **[0.2.0] – Repo Structure**  
-  Planned: introduce clear Python/SQL repo layout and env templates.
+## [0.3.0] - Unreleased
+### Planned
+- Add Dockerfile + docker-compose.yml
+- Include health checks and Makefile targets
 
-- ⏳ **[0.3.0] – Docker Compose**  
-  Planned: add Dockerfile + docker-compose.yml with health checks and Makefile targets.
+---
 
-- ⏳ **[0.4.0] – SQL ETL**  
-  Planned: implement SQL schema + ETL loader.
+## [0.4.0] - Unreleased
+### Planned
+- Implement SQL schema + ETL loader
 
-- ⏳ **[0.5.0] – Baseline Model**  
-  Planned: provide baseline churn model CLI, save artifacts and metrics.
+---
+
+## [0.5.0] - Unreleased
+### Planned
+- Provide baseline churn model CLI
+- Save artifacts and metrics
+
+---
+
+## [0.6.0] - Unreleased
+### Planned
+- Publish Tableau dashboard to Tableau Public
+- Add link and screenshots to READMEgit checkout -b docs/add-tableau-milestone
