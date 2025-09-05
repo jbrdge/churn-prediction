@@ -42,26 +42,58 @@ The dataset includes information about:
 
 ---
 
-## Project Structure
+## Current Milestone — v0.2.0 (Structure Only)
+This release introduces a clear Python/SQL layout and environment templates.
+No functional code is implemented in this milestone; files under `src/`, `sql/queries/`,
+and `tests/` are placeholders for upcoming versions.
+
+---
+
+## Project Structure (v0.2.0)
 ```
 churn-prediction/
+├── .github/
+│   ├── workflows/
+│   │   └── ci.yml
+│   └── PULL_REQUEST_TEMPLATE.md
 ├── data/
-│ └── Telco-Customer-Churn.csv
+│   ├── archive/
+│   │   └── Telco-Customer-Churn.csv
+│   ├── processed/
+│   │   └── .gitkeep
+│   └── raw/
+│       └── .gitkeep
 ├── notebooks/
-│ └── churn_regression.ipynb
+│   ├── artifacts/
+│   │   └── model_card.json
+│   ├── legacy/
+│   │   └── churn_regression.ipynb
+│   └── .gitkeep
 ├── scripts/
-│ └── load_csv.sh
+│   └── load_csv.sh
 ├── sql/
-│ ├── archive/
-│ │ └── telco_churn_database.sql
-│ ├── 00_schema.sql
-│ └── 01_post_load_transformations.sql
+│   ├── queries/
+│   │   └── sample_churn_report.sql
+│   └── 001_schema.sql
+├── src/
+│   ├── pipelines/
+│   │   └── ingest_csv.py
+│   ├── __init__.py
+│   ├── config.py
+│   └── db.py
+├── tests/
+│   └── test_db.py
 ├── .env.example
+├── .gitattributes
 ├── .gitignore
+├── CHANGELOG.md
+├── docker-compose.yml
 ├── environment.yml
+├── LICENSE
+├── Makefile
+├── README.md
 ├── requirements.txt
-├── requirements-lock.txt
-└── README.md
+└── VERSION
 ```
 
 ---
