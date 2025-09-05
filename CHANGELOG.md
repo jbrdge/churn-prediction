@@ -30,6 +30,70 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses
 - Introduce clear Python/SQL repo structure
 - Add env templates
 
+## Project Structure (v0.2.0)
+
+```
+churn-prediction/
+├── .github/
+│   ├── workflows/
+│   │   └── ci.yml
+│   └── PULL_REQUEST_TEMPLATE.md
+├── data/
+│   ├── archive/
+│   │   └── Telco-Customer-Churn.csv
+│   ├── processed/
+│   │   └── .gitkeep
+│   └── raw/
+│       └── .gitkeep
+├── notebooks/
+│   ├── artifacts/
+│   │   └── model_card.json
+│   ├── legacy/
+│   │   └── churn_regression.ipynb
+│   └── .gitkeep
+├── scripts/
+│   └── load_csv.sh
+├── sql/
+│   ├── queries/
+│   │   └── sample_churn_report.sql
+│   └── 001_schema.sql
+├── src/
+│   ├── pipelines/
+│   │   └── ingest_csv.py
+│   ├── __init__.py
+│   ├── config.py
+│   └── db.py
+├── tests/
+│   └── test_db.py
+├── .env.example
+├── .gitattributes
+├── .gitignore
+├── CHANGELOG.md
+├── docker-compose.yml
+├── environment.yml
+├── LICENSE
+├── Makefile
+├── README.md
+├── requirements.txt
+└── VERSION
+```
+## [v0.2.0] – 2025-09-05
+### Added
+- Introduced standardized Python/SQL repository structure
+- Added environment/config templates and placeholders for `src/`, `sql/queries/`, `tests/`, and `data/`
+- Added `Makefile` and `docker-compose.yml` placeholders
+- Updated README with Current Milestone (v0.2.0) note
+
+### Changed
+- Renamed `sql/00_schema.sql` → `sql/001_schema.sql`
+
+### Removed
+- Deleted legacy `sql/archive/` (files retained in Git history)
+
+### Notes
+- This is a **structure-only** release; functional logic will be added in subsequent milestones.
+
+
 ---
 
 ## [0.3.0] - Unreleased
