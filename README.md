@@ -42,13 +42,6 @@ The dataset includes information about:
 
 ---
 
-## Current Milestone — v0.2.0 (Structure Only)
-This release introduces a clear Python/SQL layout and environment templates.
-No functional code is implemented in this milestone; files under `src/`, `sql/queries/`,
-and `tests/` are placeholders for upcoming versions.
-
----
-
 ## Project Structure (v0.2.0)
 ```
 churn-prediction/
@@ -201,6 +194,12 @@ sudo mysql -e "SHOW VARIABLES LIKE 'local_infile';"
 - ⏳ [0.6.0] – Tableau Dashboard  
   Planned: publish Tableau Public dashboard and link it from README.
 
+---
+
+## Current Milestone — v0.2.0 (Structure Only)
+This release introduces a clear Python/SQL layout and environment templates.
+No functional code is implemented in this milestone; files under `src/`, `sql/queries/`,
+and `tests/` are placeholders for upcoming versions.
 
 ---
 ## License
