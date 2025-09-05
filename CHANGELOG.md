@@ -31,6 +31,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses
 - Add env templates
 
 ## Project Structure (v0.2.0)
+
 ```
 churn-prediction/
 ├── .github/
@@ -76,6 +77,22 @@ churn-prediction/
 ├── requirements.txt
 └── VERSION
 ```
+## [v0.2.0] – 2025-09-05
+### Added
+- Introduced standardized Python/SQL repository structure
+- Added environment/config templates and placeholders for `src/`, `sql/queries/`, `tests/`, and `data/`
+- Added `Makefile` and `docker-compose.yml` placeholders
+- Updated README with Current Milestone (v0.2.0) note
+
+### Changed
+- Renamed `sql/00_schema.sql` → `sql/001_schema.sql`
+
+### Removed
+- Deleted legacy `sql/archive/` (files retained in Git history)
+
+### Notes
+- This is a **structure-only** release; functional logic will be added in subsequent milestones.
+
 
 ---
 
