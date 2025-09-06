@@ -1,0 +1,23 @@
+# VCS / CI
+.git
+.github/
+.gitattributes
+.pre-commit-config.yaml
+
+# Envs / builds
+.env
+.venv
+venv/
+dist/
+build/
+
+# Notebooks & data (not needed to build image)
+notebooks/
+data/
+!data/.gitkeep
+
+# Tests and misc
+tests/
+.ipynb_checkpoints/
+*.py[cod]
+__pycache__/

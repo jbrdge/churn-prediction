@@ -1,23 +1,50 @@
+# .github/workflows/ci.yml
+# CI for churn-prediction:
+# - Ensures code quality (pre-commit hooks: Black, Ruff, nbstripout, etc.)
+# - Runs flake8 (until fully replaced with Ruff)
+# - Runs tests (currently a placeholder)
+
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   sanity-checks:
+    name: Lint, hooks, and tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Python
+    steps:
+      # 1) Get the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) Python toolchain (with pip cache for faster runs)
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"                       # speeds up pip installs across runs
+          cache-dependency-path: requirements.txt
 
+      # 3) Project dep. Keep light to avoid slowing CI while repo is young.
       - name: Install dependencies
-        run: pip install -r requirements.txt || echo "No requirements yet"
+        run: |
+          pip install -r requirements.txt || echo "No requirements yet"
+          # Add test deps later (e.g., pytest, coverage, behave, etc.)
 
-      - name: Lint
+      # 4) Run pre-commit hooks exactly as they run locally.
+      #    This reads .pre-commit-config.yaml and manages hook envs/caching.
+      - name: Run pre-commit hooks
+        uses: pre-commit/action@v3.0.1
+        # If a hook would change files (e.g., Black formatting), this job will fail,
+        # prompting you to run `pre-commit run --all-files` locally and commit the fixes.
+
+      # 5) Flake8 for now (remove once happy with Ruff-only).
+      - name: Lint (flake8 - optional)
         run: flake8 src/ sql/ || echo "No linting yet"
 
+      # 6) Tests (placeholder). Will fail open until pytest + tests added.
       - name: Run tests (placeholder)
         run: pytest || echo "No tests yet"

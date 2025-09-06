@@ -1,0 +1,50 @@
+# Dev stack for churn-prediction (v0.3.0)
+# Services:
+# - db: PostgreSQL 16 with healthcheck
+# - app: Python container kept idle for interactive exec/run
+
+services:
+  db:
+    image: postgres:16-alpine              # small, reliable Postgres base
+    restart: unless-stopped                # auto-restart unless you explicitly stop it
+    env_file:
+      - .env                               # loads POSTGRES_* from .env
+    environment:                           # explicit pass-through (ensures variables exist for image init)
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"                        # host 5433 -> container 5432 (change host port if 5433 is taken)
+    volumes:
+      - pg_data:/var/lib/postgresql/data   # docker-managed volume for DB files
+    healthcheck:                           # wait until Postgres actually accepts connections
+      # use $${...} so Compose doesn’t interpolate here; values are resolved inside the container
+      test: ["CMD-SHELL", "pg_isready -q -U $${POSTGRES_USER} -d $${POSTGRES_DB} -h 127.0.0.1 -p 5432"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env                               # app also reads POSTGRES_*
+    environment:
+      # Handy DSN for SQLAlchemy; defaults keep dev usable if .env is missing a key
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER:-churn_user}:${POSTGRES_PASSWORD:-churn_pass}@db:5432/${POSTGRES_DB:-churn}"
+    volumes:
+      - ./:/app                            # mount source for live-edit dev workflow
+    depends_on:
+      db:
+        condition: service_healthy         # app only starts once db is healthy
+    command: ["bash", "-lc", "sleep infinity"]   # keep container alive; run CLI via `exec` or `run`
+    healthcheck:                           # lightweight app self-check (optional but nice)
+      test: ["CMD-SHELL", "python -m src.app health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  pg_data:                                  # named volume (docker-managed) for Postgres data
