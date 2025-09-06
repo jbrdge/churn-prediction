@@ -13,7 +13,7 @@
 
 # Raw/derived data exports
 data/*.csv
-!data/*latest.csv 
+!data/*latest.csv
 !data/README.md          # allow small docs to describe data
 
 # Model binaries

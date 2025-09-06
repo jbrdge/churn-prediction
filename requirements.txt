@@ -1,11 +1,4 @@
-numpy==2.3.2
-pandas==2.3.2
-scikit-learn==1.7.1
-seaborn==0.13.2
-mysql-connector-python==9.4.0
+# Minimal runtime deps for v0.3.0 (health check + DB)
+sqlalchemy
+psycopg[binary]     # psycopg v3 driver
 python-dotenv==1.1.1
-jupyter==1.1.1
-matplotlib==3.10.5
-nbdime==4.0.2
-nbformat==5.10.4
-nbstripout==0.8.1

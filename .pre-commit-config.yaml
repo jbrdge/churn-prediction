@@ -1,0 +1,40 @@
+# Pre-commit hooks for churn-prediction
+# Runs locally (via git hooks) and in CI to keep the repo clean & consistent.
+# Docs: https://pre-commit.com
+
+repos:
+  # Tiny, fast sanity checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace      # strip stray spaces
+      - id: end-of-file-fixer        # ensure file ends with a newline
+      - id: check-yaml               # validate .yml/.yaml
+      - id: check-json               # validate .json
+
+  # Code formatter (opinionated, stable)
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black                    # formats Python code
+        # args: ["--line-length=88"] # (optional) customize if you like
+
+  # Linter (fast; autofixes a lot)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+        files: "\\.py$"        # <— only lint Python files
+        # (optional) also skip the entire notebooks dir:
+        exclude: "^notebooks/"
+
+  # Keep notebooks light: remove outputs on commit/push
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.1
+    hooks:
+      - id: nbstripout
+        files: "\\.ipynb$"          # only run on notebooks
+
+# (Optional) Run hooks on commit AND push; commit-time checks
+default_stages: [commit, push]
