@@ -1,4 +1,4 @@
-.PHONY: up down down-v logs ps health app-sh db-sh db-psql app-psql host-psql db-ready db-ready-verbose compose-config check-mysql-refs hooks hooks-run hooks-update
+.PHONY: up down down-v logs ps health app-sh db-sh db-psql app-psql host-psql db-ready db-ready-verbose compose-config check-mysql-refs hooks hooks-run hooks-update commit
 
 # --- Core lifecycle ----------------------------------------------------------
 
@@ -69,3 +69,9 @@ hooks-run:     ## Run all pre-commit hooks against the entire repo
 
 hooks-update:  ## Update pre-commit hook versions to latest safe pins
 	pre-commit autoupdate
+
+commit: ## make commit MSG="your message"
+	@[ -n "$(MSG)" ] || (echo "Usage: make commit MSG='…'"; exit 1)
+	pre-commit run --all-files
+	git add -A
+	git commit -m "$(MSG)"
