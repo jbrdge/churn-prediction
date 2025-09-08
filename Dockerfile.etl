@@ -1,0 +1,18 @@
+# Dockerfile.etl — ETL image
+FROM python:3.11-slim
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+
+# Install Python deps for ETL
+COPY requirements.txt .
+RUN python -m pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+# Copy pipeline code
+COPY src/ ./src
+
+# Where the container expects CSVs (mounted by Compose)
+ENV DATA_DIR=/app/data/raw
+
+# Entry runs the loader (Compose can pass flags via `command:`)
+ENTRYPOINT ["python", "-m", "src.pipelines.ingest_csv"]

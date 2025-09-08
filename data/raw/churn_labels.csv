@@ -1,1 +1,2 @@
-external_id, label, label_date, reason_code, notes
+external_id,label,label_date,reason_code,notes
+CUST-001,false,2024-06-30,,

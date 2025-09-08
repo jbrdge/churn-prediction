@@ -2,3 +2,5 @@
 sqlalchemy
 psycopg[binary]     # psycopg v3 driver
 python-dotenv==1.1.1
+psycopg2-binary
+python-dotenv
