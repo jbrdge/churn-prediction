@@ -24,7 +24,6 @@ _What does this PR do? Provide a 1–2 sentence overview._
 
 ## Checklist
 - [ ] Code/SQL formatted and readable
-- [ ] Outputs cleared from notebooks before commit (if any)
 - [ ] Tests or sanity checks included where applicable
 - [ ] README and CHANGELOG remain accurate
 - [ ] Branch protection respected (merge via PR, squash enabled)
