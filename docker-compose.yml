@@ -14,9 +14,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5433:5432"                        # host 5433 -> container 5432 (change host port if 5433 is taken)
+      - "${POSTGRES_PORT:-5432}:5432"                      # host 5433 -> container 5432 (change host port if 5433 is taken)
     volumes:
       - pg_data:/var/lib/postgresql/data   # docker-managed volume for DB files
+      - ./sql:/sql:ro            # <<< required for make schema to work
     healthcheck:                           # wait until Postgres actually accepts connections
       # use $${...} so Compose doesn’t interpolate here; values are resolved inside the container
       test: ["CMD-SHELL", "pg_isready -q -U $${POSTGRES_USER} -d $${POSTGRES_DB} -h 127.0.0.1 -p 5432"]
@@ -27,7 +28,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.app
     restart: unless-stopped
     env_file:
       - .env                               # app also reads POSTGRES_*
@@ -46,5 +47,28 @@ services:
       timeout: 10s
       retries: 3
 
+  etl:
+    build:
+      context: .
+      dockerfile: Dockerfile.etl
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      PGHOST: ${POSTGRES_HOST}
+      PGPORT: ${POSTGRES_PORT}
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      DATA_DIR: /app/data/raw
+    volumes:
+      # Mount repo’s raw data into the container path the loader reads
+      - ./data/raw:/app/data/raw:rw
+      # mount sql to run psql inside this container later
+      - ./sql:/app/sql:ro
+    command: ["--data-dir", "/app/data/raw", "--full-refresh"]
+
 volumes:
-  pg_data:                                  # named volume (docker-managed) for Postgres data
+  pg_data:            # named volume (docker-managed) for Postgres data
