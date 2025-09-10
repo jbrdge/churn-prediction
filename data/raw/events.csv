@@ -1,2 +1,0 @@
-external_id,event_type,event_ts,properties,source_file
-CUST-001,signup,2024-06-30T00:00:00Z,"{""contract"":""Month-to-month""}",events.csv

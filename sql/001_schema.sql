@@ -22,20 +22,6 @@ CREATE TABLE IF NOT EXISTS churn.customers (
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Events (synthetic signup/billing)
-CREATE TABLE IF NOT EXISTS churn.events (
-  event_id    BIGSERIAL PRIMARY KEY,
-  customer_id UUID REFERENCES churn.customers(customer_id) ON DELETE CASCADE,
-  event_type  TEXT NOT NULL,
-  event_ts    TIMESTAMPTZ NOT NULL,
-  properties  JSONB,
-  source_file TEXT,
-  inserted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS ix_events_customer_ts ON churn.events(customer_id, event_ts DESC);
-CREATE INDEX IF NOT EXISTS ix_events_type_ts    ON churn.events(event_type, event_ts DESC);
-
 -- Churn labels (snapshot)
 CREATE TABLE IF NOT EXISTS churn.churn_labels (
   customer_id UUID REFERENCES churn.customers(customer_id) ON DELETE CASCADE,

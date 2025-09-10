@@ -2,10 +2,8 @@
 CSV → Postgres loader for the churn project.
 
 - Reads .env for DB connection: PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD
-- Loads CSVs from data/raw/: customers.csv, events.csv, churn_labels.csv
+- Loads CSVs from data/raw/: customers.csv, churn_labels.csv
 - Upserts customers by external_id
-- Inserts events/labels referencing customer_id (skips orphans)
-- Supports --full-refresh flag to truncate events/labels before reload
 """
 
 import argparse
@@ -19,7 +17,6 @@ from dotenv import load_dotenv
 
 REQUIRED_FILES = {
     "customers": "customers.csv",
-    "events": "events.csv",
     "churn_labels": "churn_labels.csv",
 }
 
@@ -34,7 +31,7 @@ CUSTOMERS_COLS = [
     "is_active",
     "attributes",
 ]
-EVENTS_COLS = ["external_id", "event_type", "event_ts", "properties", "source_file"]
+
 CHURN_COLS = ["external_id", "label", "label_date", "reason_code", "notes"]
 
 
@@ -105,29 +102,6 @@ def map_external_to_uuid(cur):
     return {ext: uuid for ext, uuid in cur.fetchall()}
 
 
-def load_events(cur, rows, ext2uuid, source_file):
-    values = []
-    for r in rows:
-        cust_uuid = ext2uuid.get(r.get("external_id"))
-        if not cust_uuid:
-            continue
-        values.append(
-            [
-                cust_uuid,
-                r.get("event_type"),
-                r.get("event_ts"),
-                r.get("properties"),
-                source_file,
-            ]
-        )
-    if values:
-        sql = """
-            INSERT INTO churn.events (customer_id, event_type, event_ts, properties, source_file)
-            VALUES %s;
-        """
-        execute_values(cur, sql, values, page_size=1000)
-
-
 def load_churn_labels(cur, rows, ext2uuid):
     values = []
     for r in rows:
@@ -156,7 +130,6 @@ def load_churn_labels(cur, rows, ext2uuid):
 
 
 def truncate_tables(cur):
-    cur.execute("TRUNCATE churn.events RESTART IDENTITY CASCADE;")
     cur.execute("TRUNCATE churn.churn_labels;")
 
 
@@ -176,8 +149,6 @@ def main():
     # Column checks
     if datasets["customers"]:
         ensure_columns(datasets["customers"], CUSTOMERS_COLS, files["customers"].name)
-    if datasets["events"]:
-        ensure_columns(datasets["events"], EVENTS_COLS, files["events"].name)
     if datasets["churn_labels"]:
         ensure_columns(datasets["churn_labels"], CHURN_COLS, files["churn_labels"].name)
 
@@ -191,8 +162,6 @@ def main():
                 upsert_customers(cur, datasets["customers"])
             ext2uuid = map_external_to_uuid(cur)
 
-            if datasets["events"]:
-                load_events(cur, datasets["events"], ext2uuid, str(files["events"]))
             if datasets["churn_labels"]:
                 load_churn_labels(cur, datasets["churn_labels"], ext2uuid)
 
@@ -200,7 +169,6 @@ def main():
         print(
             "Ingest complete. "
             f"{len(datasets['customers'])} customers, "
-            f"{len(datasets['events'])} events, "
             f"{len(datasets['churn_labels'])} labels processed."
         )
     except Exception:

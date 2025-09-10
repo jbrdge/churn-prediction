@@ -20,6 +20,21 @@ help: ## Show this help
 	@awk 'BEGIN {FS":.*##"} /^[a-zA-Z0-9_-]+:.*##/ {printf "\033[36m%-26s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # -------------------------------------------------------------------
+# End-to-end: bring up DB, apply schema, run ETL (transform+load), then validations
+# -------------------------------------------------------------------
+e2e: up-db db-ready schema etl validate
+	@echo ">> E2E complete."
+
+e2e-v: up-db db-ready schema etl validate-all
+	@echo ">> E2E complete."
+
+# Alias for CI or quick local smoke test
+runbook-check: e2e
+
+# Alias for CI or quick local smoke test verbose
+runbook-check-verbose: e2e-v
+
+# -------------------------------------------------------------------
 # Core lifecycle
 # -------------------------------------------------------------------
 up: ## Build & start all services
@@ -103,7 +118,7 @@ validate-churn-table: ## List churn.* tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "\dt churn.*"'
 
 counts: ## Row counts across churn tables
-	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT '\''customers'\'' AS t, COUNT(*) AS n FROM churn.customers UNION ALL SELECT '\''events'\'', COUNT(*) FROM churn.events UNION ALL SELECT '\''churn_labels'\'', COUNT(*) FROM churn.churn_labels;"'
+	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT '\''customers'\'' AS t, COUNT(*) AS n FROM churn.customers UNION ALL SELECT '\''churn_labels'\'', COUNT(*) FROM churn.churn_labels;"'
 
 validate-all: db-ready validate-db validate-churn-table counts ## Run all DB validations
 
@@ -147,3 +162,21 @@ commit: ## make commit MSG="your message"
 	pre-commit run --all-files
 	git add -A
 	git commit -m "$(MSG)"
+
+
+# -------------------------------------------------------------------
+# clean helpers
+# -------------------------------------------------------------------
+# Stop everything and wipe DB volume (fresh DB next up)
+clean: ## Stop & remove containers + volumes (fresh DB)
+	docker compose down -v
+
+# Hard reset: clean + remove images, dangling data, and processed CSVs (optional)
+nuke: ## Full reset (includes images and processed data)
+	docker compose down -v --rmi local --remove-orphans
+	rm -rf data/processed || true
+	find . -name "__pycache__" -type d -prune -exec rm -rf {} \; || true
+
+# Convenience: full reset + rebuild db only
+reset: clean
+	docker compose up -d db
