@@ -9,7 +9,9 @@
   build-app build-etl build-all \
   up-db schema etl \
   db-ready db-ready-verbose validate-db validate-churn-table counts validate-all validate \
+
   sql-check compose-config check-mysql-refs db-logs\
+
   health app-sh db-sh db-psql app-psql host-psql \
   hooks hooks-run hooks-update commit
 
@@ -100,7 +102,9 @@ host-psql: ## (optional) psql from host -> container (requires host psql)
 # -------------------------------------------------------------------
 # Readiness & validation
 # -------------------------------------------------------------------
+
 db-ready: ## Wait until Postgres accepts connections (30s timeout)
+
 	docker compose exec -T db sh -lc '\
 	for i in $$(seq 1 30); do \
 	  pg_isready -q -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
@@ -128,7 +132,6 @@ validate-churn-table: ## List churn.* tables
 counts: ## Row counts across churn tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT '\''customers'\'' AS t, COUNT(*) AS n FROM churn.customers UNION ALL SELECT '\''churn_labels'\'', COUNT(*) FROM churn.churn_labels;"'
 
-validate-all: db-ready validate-db validate-churn-table counts ## Run all DB validations
 
 validate: ## Run sql/010_validation.sql if present
 	@if [ -f sql/010_validation.sql ]; then \
@@ -151,6 +154,7 @@ compose-config: ## Show resolved compose (env + mounts)
 
 check-mysql-refs: ## Find any lingering MySQL refs
 	@grep -RInE 'MYSQL|mysql' -- . || echo "No MySQL refs found."
+
 
 db-logs: ## Tail Postgres logs
 	docker compose logs -f db
