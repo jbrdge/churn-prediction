@@ -71,4 +71,4 @@ services:
     command: ["--data-dir", "/app/data/raw", "--full-refresh"]
 
 volumes:
-  pg_data:                                  # named volume (docker-managed) for Postgres data
+  pg_data:            # named volume (docker-managed) for Postgres data
