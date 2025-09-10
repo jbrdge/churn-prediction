@@ -9,7 +9,9 @@
   build-app build-etl build-all \
   up-db schema etl \
   db-ready db-ready-verbose validate-db validate-churn-table counts validate-all validate \
+
   sql-check compose-config check-mysql-refs db-logs\
+
   health app-sh db-sh db-psql app-psql host-psql \
   hooks hooks-run hooks-update commit
 
@@ -97,10 +99,12 @@ app-psql: ## List relations from app (proves cross-container DB access)
 host-psql: ## (optional) psql from host -> container (requires host psql)
 	( set -a; . ./.env; set +a; psql -h localhost -p $${POSTGRES_PORT:-5432} -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c '\l' )
 
+
 # -------------------------------------------------------------------
 # Readiness & validation
 # -------------------------------------------------------------------
 db-ready: ## Wait until Postgres accepts connections (30s timeout)
+
 	docker compose exec -T db sh -lc '\
 	for i in $$(seq 1 30); do \
 	  pg_isready -q -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
@@ -125,6 +129,7 @@ validate-db: ## List schemas (should include 'churn')
 validate-churn-table: ## List churn.* tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "\dt churn.*"'
 
+
 counts: ## Row counts across churn tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT '\''customers'\'' AS t, COUNT(*) AS n FROM churn.customers UNION ALL SELECT '\''churn_labels'\'', COUNT(*) FROM churn.churn_labels;"'
 
@@ -145,6 +150,7 @@ validate: ## Run sql/010_validation.sql if present
 # -------------------------------------------------------------------
 sql-check: ## Verify sql/ is mounted into db container
 	docker compose exec db ls -la /sql
+
 
 compose-config: ## Show resolved compose (env + mounts)
 	docker compose config
