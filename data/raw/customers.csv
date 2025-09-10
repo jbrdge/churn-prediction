@@ -1,1 +1,2 @@
-external_id, created_at, signup_source, country, region, city, plan_tier, is_active, attributes
+external_id,created_at,signup_source,country,region,city,plan_tier,is_active,attributes
+CUST-001,2024-06-30T00:00:00Z,Month-to-month,US,NA,,DSL,true,"{""gender"":""Female"",""tenure"":""1""}"
