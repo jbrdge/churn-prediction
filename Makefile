@@ -9,7 +9,7 @@
   build-app build-etl build-all \
   up-db schema etl \
   db-ready db-ready-verbose validate-db validate-churn-table counts validate-all validate \
-  sql-check compose-config check-mysql-refs \
+  sql-check compose-config check-mysql-refs db-logs\
   health app-sh db-sh db-psql app-psql host-psql \
   hooks hooks-run hooks-update commit
 
@@ -100,14 +100,22 @@ host-psql: ## (optional) psql from host -> container (requires host psql)
 # -------------------------------------------------------------------
 # Readiness & validation
 # -------------------------------------------------------------------
-db-ready: ## Prints "ready" when Postgres is accepting connections
+db-ready: ## Wait until Postgres accepts connections (30s timeout)
 	docker compose exec -T db sh -lc '\
-		pg_isready -q -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
-		&& echo "ready" || (echo "not ready"; exit 1)'
+	for i in $$(seq 1 30); do \
+	  pg_isready -q -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
+	    && echo "ready" && exit 0; \
+	  echo "waiting ($$i/30) ..."; sleep 1; \
+	done; \
+	echo "not ready"; exit 1'
 
-db-ready-verbose: ## Verbose readiness + env echo inside container
+db-ready-verbose: ## Verbose readiness with retries + env echo
 	docker compose exec -T db sh -lc '\
 		echo "USER=$$POSTGRES_USER DB=$$POSTGRES_DB HOST=127.0.0.1 PORT=5432"; \
+		for i in $$(seq 1 30); do \
+		  pg_isready -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" && break; \
+		  echo "waiting ($$i/30) ..."; sleep 1; \
+		done; \
 		pg_isready -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"; \
 		echo "exit=$$?"'
 
@@ -143,6 +151,9 @@ compose-config: ## Show resolved compose (env + mounts)
 
 check-mysql-refs: ## Find any lingering MySQL refs
 	@grep -RInE 'MYSQL|mysql' -- . || echo "No MySQL refs found."
+
+db-logs: ## Tail Postgres logs
+	docker compose logs -f db
 
 # -------------------------------------------------------------------
 # pre-commit helpers
