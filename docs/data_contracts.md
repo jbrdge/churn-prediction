@@ -29,4 +29,4 @@ These define the exact headers and semantics the loader expects.
 
 ## Validation Expectations
 - JSON columns must be parseable; timestamps ISO8601; booleans lowercase `true|false`.
-- Every `events` and `churn_labels` row should resolve to an existing `external_id` in `customers` (unknowns are skipped by loader).
+- `churn_labels` row should resolve to an existing `external_id` in `customers` (unknowns are skipped by loader).
