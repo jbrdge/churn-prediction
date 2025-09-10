@@ -99,10 +99,10 @@ app-psql: ## List relations from app (proves cross-container DB access)
 host-psql: ## (optional) psql from host -> container (requires host psql)
 	( set -a; . ./.env; set +a; psql -h localhost -p $${POSTGRES_PORT:-5432} -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c '\l' )
 
+
 # -------------------------------------------------------------------
 # Readiness & validation
 # -------------------------------------------------------------------
-
 db-ready: ## Wait until Postgres accepts connections (30s timeout)
 
 	docker compose exec -T db sh -lc '\
@@ -129,9 +129,11 @@ validate-db: ## List schemas (should include 'churn')
 validate-churn-table: ## List churn.* tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "\dt churn.*"'
 
+
 counts: ## Row counts across churn tables
 	docker compose exec -T db sh -lc 'psql -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT '\''customers'\'' AS t, COUNT(*) AS n FROM churn.customers UNION ALL SELECT '\''churn_labels'\'', COUNT(*) FROM churn.churn_labels;"'
 
+validate-all: db-ready validate-db validate-churn-table counts ## Run all DB validations
 
 validate: ## Run sql/010_validation.sql if present
 	@if [ -f sql/010_validation.sql ]; then \
@@ -149,12 +151,12 @@ validate: ## Run sql/010_validation.sql if present
 sql-check: ## Verify sql/ is mounted into db container
 	docker compose exec db ls -la /sql
 
+
 compose-config: ## Show resolved compose (env + mounts)
 	docker compose config
 
 check-mysql-refs: ## Find any lingering MySQL refs
 	@grep -RInE 'MYSQL|mysql' -- . || echo "No MySQL refs found."
-
 
 db-logs: ## Tail Postgres logs
 	docker compose logs -f db
