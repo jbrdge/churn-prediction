@@ -16,17 +16,6 @@ These define the exact headers and semantics the loader expects.
 - `is_active`: boolean encoded as `true|false`
 - `attributes`: **valid JSON string** (will be cast to JSONB)
 
-### events.csv
-
-**Headers:** `external_id, event_type, event_ts, properties, source_file`
-
-**Semantics/Types:**
-- `external_id`: joins to `customers.external_id`
-- `event_type`: string (e.g., `signup`, `billing_cycle`)
-- `event_ts`: ISO8601 timestamp
-- `properties`: **valid JSON string **(nullable)
-- `source_file`: string (provenance; filename okay)
-
 ### churn_labels.csv
 
 **Headers:** `external_id, label, label_date, reason_code, notes`
