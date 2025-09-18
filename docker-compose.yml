@@ -63,11 +63,20 @@ services:
       PGUSER: ${POSTGRES_USER}
       PGPASSWORD: ${POSTGRES_PASSWORD}
       DATA_DIR: /app/data/raw
+      MPLBACKEND: Agg               #matplotlib
+      MPLCONFIGDIR: /tmp/matplotlib #matplotlib
+      XDG_CACHE_HOME: /tmp          #matplotlib
+    working_dir: /app
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     volumes:
-      # Mount repo’s raw data into the container path the loader reads
-      - ./data/raw:/app/data/raw:rw
-      # mount sql to run psql inside this container later
+      #  mount relevant features only (clean)
+      - ./src:/app/src:ro
+      - ./scripts:/app/scripts:ro
       - ./sql:/app/sql:ro
+      - ./data/archive:/app/data/archive:ro
+      - ./data/processed:/app/data/processed:rw
+      - ./artifacts:/app/artifacts:rw
+
     command: ["--data-dir", "/app/data/raw", "--full-refresh"]
 
 volumes:
