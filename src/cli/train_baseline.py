@@ -155,8 +155,6 @@ def train_and_save(
     outdir: str,
     sample_n: Optional[int] = None,
 ):
-    rng = np.random.RandomState(random_state)
-    print(f"RNG for this cycle: {rng}")
 
     df = pd.read_parquet(input_path)
     if target not in df.columns:

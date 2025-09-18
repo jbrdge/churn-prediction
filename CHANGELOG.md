@@ -12,15 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Monte Carlo harness**: `make monte-carlo N=<rows> MC_ITERS=<k>` produces `artifacts/mc_baseline/metrics.csv` and per-run artifacts.
 - **Best-run selection**: `scripts/mc_best.py` + `make mc-best [METRIC=roc_auc]` copies best run to `artifacts/mc_baseline/best/` and writes `best_summary.json`.
 - **Helper scripts**: `scripts/archive_to_parquet.py`, `scripts/show_metrics.py`, `scripts/mc_append_metrics.py`, `scripts/docker-env.sh`.
-- **Make targets**: `train-baseline`, `train-baseline-sample`, `make-features-from-archive`, `show-metrics`, `ls-artifacts`, `monte-carlo`, `monte-carlo-summary`, `mc-best`, `mc-show-best`, `mc-show-best-metrics`, `mc-ls-best`.
+- **Make targets** only (no raw Python needed): `make-features-from-archive`, `train-baseline`, `train-baseline-sample`, `show-metrics`, `ls-artifacts`, `monte-carlo`, `monte-carlo-summary`, `mc-best`, `mc-show-best`, `mc-show-best-metrics`, `mc-ls-best`.
 - **Headless plotting**: configure Matplotlib backend/cache so PNG plots render in containers.
-- **Permissions UX**: support running containers as host user with `user: "${HOST_UID:-1000}:${HOST_GID:-1000}"` and helper script to export these env vars.
+- **Permissions UX**: support running containers as host user with `user: "${HOST_UID:-1000}:${HOST_GID:-1000}"` and helper script.
 
 ### Changed
-- **Makefile**: removed fragile heredocs; switched to tiny scripts + `--entrypoint sh -c` for reliability.
+- **Makefile**: added Docker-first targets and removed fragile heredocs; use `--entrypoint sh -c`.
 - **ROC plot**: save via explicit `fig, ax` to avoid blank images in headless runs.
 - **Feature names**: extract from fitted `ColumnTransformer.get_feature_names_out()` for correct one-hot names.
-- **Docs**: README updated with Baseline, Sampling, Monte Carlo, mc-best, and permissions guidance.
+- **Docs**: README updated to use **Make-only** commands for training and analysis; added Monte Carlo and best-run helpers.
 - **Dependencies**: recommended pins in `requirements.txt` for deterministic runs (pandas, scikit-learn, matplotlib, pyarrow, joblib).
 
 ### Removed

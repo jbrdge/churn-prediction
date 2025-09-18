@@ -1,3 +1,5 @@
+.env
+
 # -------------------------------------------------------------------
 # Data & artifacts (runtime, not source-controlled)
 # -------------------------------------------------------------------
@@ -5,6 +7,20 @@
 # Model artifacts (all runs, keep .gitkeep)
 artifacts/*
 !artifacts/.gitkeep
+
+# Allow only best-run TEXT artifacts to be committed
+!artifacts/mc_baseline/
+artifacts/mc_baseline/**
+!artifacts/mc_baseline/.gitkeep
+!artifacts/mc_baseline/best/
+artifacts/mc_baseline/best/**
+!artifacts/mc_baseline/best/best_summary.json
+!artifacts/mc_baseline/best/metrics.json
+!artifacts/mc_baseline/best/params.json
+!artifacts/mc_baseline/best/coefficients.csv
+!artifacts/mc_baseline/best/confusion_matrix.png
+!artifacts/mc_baseline/best/roc_curve.png
+# (Still ignored: model.pkl, *.png, and any other large binaries)
 
 # Processed features
 data/processed/*
