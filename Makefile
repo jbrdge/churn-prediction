@@ -212,13 +212,14 @@ reset: clean
 # Build features.parquet from the Kaggle archive (no DB dependency)
 # usage: make make-features-from-archive [N=500]
 # if no N, it will transfer full dataset to parquet
+# --entrypoint sh -c '…' replaces the service’s default command, so ingest_csv.py won’t intercept.
 make-features-from-archive:
-	 docker compose run --rm --entrypoint sh etl \
-	 	-c 'python scripts/archive_to_parquet.py \
-	 		--input data/archive/Telco-Customer-Churn.csv \
-	 		--out data/processed/features.parquet \
-	 		--target churned \
-	 		$${N:+--sample $${N}}'
+	docker compose run --rm --entrypoint sh etl -c '\
+	  python scripts/archive_to_parquet.py \
+	    --input data/archive/Telco-Customer-Churn.csv \
+	    --out data/processed/features.parquet \
+	    --target churned \
+	    $(if $(N),--sample $(N),)'
 
 # Train (full dataset parquet)
 train-baseline:

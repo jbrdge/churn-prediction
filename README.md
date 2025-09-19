@@ -98,6 +98,8 @@ make train-baseline-sample N=100
 
 Stress-test stability by varying seed and (optionally) the sample size:
 
+
+
 ```bash
 make monte-carlo N=50 MC_ITERS=10
 make monte-carlo-summary
