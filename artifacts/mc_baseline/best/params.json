@@ -1,0 +1,33 @@
+{
+  "model": "LogisticRegression",
+  "random_state": 7,
+  "test_size": 0.2,
+  "solver": "liblinear",
+  "features": {
+    "numeric": [
+      "SeniorCitizen",
+      "tenure",
+      "MonthlyCharges",
+      "TotalCharges"
+    ],
+    "categorical": [
+      "gender",
+      "Partner",
+      "Dependents",
+      "PhoneService",
+      "MultipleLines",
+      "InternetService",
+      "OnlineSecurity",
+      "OnlineBackup",
+      "DeviceProtection",
+      "TechSupport",
+      "StreamingTV",
+      "StreamingMovies",
+      "Contract",
+      "PaperlessBilling",
+      "PaymentMethod"
+    ]
+  },
+  "input_path": "data/processed/features.parquet",
+  "target": "churned"
+}
