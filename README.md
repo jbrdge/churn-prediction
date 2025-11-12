@@ -4,7 +4,7 @@
 ![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-End-to-end churn workflow, built incrementally. As of **v0.5.0**, the project ships a **reproducible baseline model** CLI (Logistic Regression), artifact persistence, optional sampling, a Monte Carlo harness, and Docker UX fixes. Earlier versions provided Dockerized ETL + validation.
+This is a learning project, I used AI assisted templates for code to review MLOps Concepts. I performed the planning of the project as if I were a project manager creating milestones, issues, PRs, actions, labels, code reviews, etc. It is an ongoing and I plan to expand it as I learn. End-to-end churn workflow, built incrementally. As of **v0.5.0**, the project ships a **reproducible baseline model** CLI (Logistic Regression), artifact persistence, optional sampling, a Monte Carlo harness, and Docker UX fixes. Earlier versions provided Dockerized ETL + validation.
 
 ---
 
