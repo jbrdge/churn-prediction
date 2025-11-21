@@ -32,7 +32,7 @@ Developer (Make/Compose)
 |  docker container |        |   docker container       |
 +-------------------+        +--------------------------+
          ^   |
-         |   | 
+         |   |
          +----------------------------+ 
          |   reads env from `.env`    |
          | (POSTGRES_*; DATABASE_URL) |
