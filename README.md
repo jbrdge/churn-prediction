@@ -4,7 +4,7 @@
 ![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-This is a learning project. I explored this dataset as part of a tableau dashboard project from analystbuilder.com.
+This is a learning project. I explored this dataset as part of a tableau dashboard project from analystbuilder.com (see below).
   
 I also used AI assisted templates for code to review DevOps Concepts. I performed the planning of the project as if I were a project manager creating milestones, issues, PRs, actions, labels, code reviews, etc. It is an ongoing and I plan to expand it as I learn.
 
@@ -12,8 +12,9 @@ End-to-end churn workflow, built incrementally. As of **v0.5.0**, the project sh
 
 --- 
 
-I have explored this dataset using Tableau in a project from analystbuilder.com  
-[Click here to view dashboard and exploratory data analysis project on Tableau](https://public.tableau.com/app/profile/jacob.breckenridge3515/viz/ChurnRateDashboard_17637009394140/Dashboard1?publish=yes)  
+I have explored this dataset using Tableau in a project from analystbuilder.com
+
+[Click here to view dashboard and exploratory data analysis project on Tableau](https://public.tableau.com/app/profile/jacob.breckenridge3515/viz/ChurnRateDashboard_17637009394140/Dashboard1?publish=yes)
 
 ![Churn Prediction Dashboard](tableau-dashboard-1.png)
 
@@ -31,8 +32,11 @@ Developer (Make/Compose)
 |  docker container |        |   docker container       |
 +-------------------+        +--------------------------+
          ^   |
-         |   | reads env from `.env`
-         +---+ (POSTGRES_*; DATABASE_URL)
+         |   | 
+         +----------------------------+ 
+         |   reads env from `.env`    |
+         | (POSTGRES_*; DATABASE_URL) |
+         +----------------------------+
 ```
 
 - **Python 3.11** (lean runtime): SQLAlchemy + psycopg v3, scikit-learn, pandas, matplotlib
