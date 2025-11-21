@@ -4,7 +4,7 @@
 ![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-This is a learning project. I explored this dataset as part of a tableau dashboard project from analystbuilder.com.  
+This is a learning project. I explored this dataset as part of a tableau dashboard project from analystbuilder.com.
   
 I also used AI assisted templates for code to review DevOps Concepts. I performed the planning of the project as if I were a project manager creating milestones, issues, PRs, actions, labels, code reviews, etc. It is an ongoing and I plan to expand it as I learn.
 
