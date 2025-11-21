@@ -1,38 +1,58 @@
-# Ignore secrets
 .env
 
-# Ignore zip files
-.zip
+# -------------------------------------------------------------------
+# Data & artifacts (runtime, not source-controlled)
+# -------------------------------------------------------------------
 
-#Ignore Venv
-.venv
+# Model artifacts (all runs, keep .gitkeep)
+artifacts/*
+!artifacts/.gitkeep
 
-# -------------------
-# Data & Artifacts
-# -------------------
+# Allow only best-run TEXT artifacts to be committed
+!artifacts/mc_baseline/
+artifacts/mc_baseline/**
+!artifacts/mc_baseline/.gitkeep
+!artifacts/mc_baseline/best/
+artifacts/mc_baseline/best/**
+!artifacts/mc_baseline/best/best_summary.json
+!artifacts/mc_baseline/best/metrics.json
+!artifacts/mc_baseline/best/params.json
+!artifacts/mc_baseline/best/coefficients.csv
+!artifacts/mc_baseline/best/confusion_matrix.png
+!artifacts/mc_baseline/best/roc_curve.png
+# (Still ignored: model.pkl, *.png, and any other large binaries)
 
-# Raw/derived data exports
-data/*.csv
-!data/*latest.csv
-!data/README.md          # allow small docs to describe data
+# Processed features
+data/processed/*
+!data/processed/.gitkeep
 
-# Model binaries
-notebooks/artifacts/logreg_pipeline.joblib
-notebooks/artifacts/*.joblib
-notebooks/artifacts/*.pkl
-notebooks/artifacts/*.h5
+# Kaggle archive (large source CSVs stay local, keep placeholder)
+data/archive/*
+!data/archive/.gitkeep
 
-# Model metadata: keep JSON cards under version control
-!notebooks/artifacts/*.json
-
-# -------------------
-# Jupyter & Python
-# -------------------
-.ipynb_checkpoints/
+# -------------------------------------------------------------------
+# Python cache / venv
+# -------------------------------------------------------------------
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.egg-info/
-dist/
-build/
+*.pkl
+*.joblib
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# -------------------------------------------------------------------
+# Jupyter / Notebooks
+# -------------------------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb
+
+# -------------------------------------------------------------------
+# OS cruft
+# -------------------------------------------------------------------
+.DS_Store
+Thumbs.db

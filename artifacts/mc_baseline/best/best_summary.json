@@ -1,0 +1,8 @@
+{
+  "metric": "roc_auc",
+  "value": 0.857035831460384,
+  "seed": 7,
+  "sample_n": 7500,
+  "source_run_dir": "artifacts/mc_baseline/run_7",
+  "copied_to": "artifacts/mc_baseline/best"
+}

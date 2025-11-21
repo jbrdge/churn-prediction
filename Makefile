@@ -5,15 +5,16 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help \
-  up down down-v logs ps \
-  build-app build-etl build-all \
-  up-db schema etl \
-  db-ready db-ready-verbose validate-db validate-churn-table counts validate-all validate \
-
-  sql-check compose-config check-mysql-refs db-logs\
-
-  health app-sh db-sh db-psql app-psql host-psql \
-  hooks hooks-run hooks-update commit
+up down down-v logs ps \
+build-app build-etl build-all \
+up-db schema etl fix-artifacts-perms\
+db-ready db-ready-verbose validate-db validate-churn-table counts validate-all validate \
+sql-check compose-config check-mysql-refs db-logs\
+health app-sh db-sh db-psql app-psql host-psql \
+hooks hooks-run hooks-update commit \
+train-baseline test-baseline train-baseline-sample \
+monte-carlo monte-carlo-summary mc-best \
+show-metrics ls-artifacts
 
 # -------------------------------------------------------------------
 # Help
@@ -79,7 +80,8 @@ schema: ## Apply schema (sql/001_schema.sql) inside the db container
 		     -f /sql/001_schema.sql
 
 etl: build-etl ## Run ETL loader (CSV -> Postgres)
-	docker compose run --rm etl
+	docker compose run --rm etl \
+	-e MPLBACKEND=Agg -e MPLCONFIGDIR=/tmp/matplotlib -e XDG_CACHE_HOME=/tmp
 
 health: ## App health (env + DB ping)
 	docker compose exec -T app python -m src.app health || true
@@ -99,12 +101,15 @@ app-psql: ## List relations from app (proves cross-container DB access)
 host-psql: ## (optional) psql from host -> container (requires host psql)
 	( set -a; . ./.env; set +a; psql -h localhost -p $${POSTGRES_PORT:-5432} -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c '\l' )
 
+fix-artifacts-perms:
+	@[ -n "$$HOST_UID" ] || (echo "Set HOST_UID/HOST_GID (source scripts/docker-env.sh)"; exit 1)
+	docker compose run --rm --entrypoint sh etl -c 'chown -R $$HOST_UID:$$HOST_GID artifacts || true' \
+	-e MPLBACKEND=Agg -e MPLCONFIGDIR=/tmp/matplotlib -e XDG_CACHE_HOME=/tmp
 
 # -------------------------------------------------------------------
 # Readiness & validation
 # -------------------------------------------------------------------
 db-ready: ## Wait until Postgres accepts connections (30s timeout)
-
 	docker compose exec -T db sh -lc '\
 	for i in $$(seq 1 30); do \
 	  pg_isready -q -h 127.0.0.1 -p 5432 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
@@ -197,3 +202,109 @@ nuke: ## Full reset (includes images and processed data)
 # Convenience: full reset + rebuild db only
 reset: clean
 	docker compose up -d db
+
+
+
+# -------------------------------------------------------------------
+# training tools
+# -------------------------------------------------------------------
+
+# Build features.parquet from the Kaggle archive (no DB dependency)
+# usage: make make-features-from-archive [N=500]
+# if no N, it will transfer full dataset to parquet
+# --entrypoint sh -c '…' replaces the service’s default command, so ingest_csv.py won’t intercept.
+make-features-from-archive:
+	docker compose run --rm --entrypoint sh etl -c '\
+	  python scripts/archive_to_parquet.py \
+	    --input data/archive/Telco-Customer-Churn.csv \
+	    --out data/processed/features.parquet \
+	    --target churned \
+	    $(if $(N),--sample $(N),)'
+
+# Train (full dataset parquet)
+train-baseline:
+	 docker compose run --rm -e MPLBACKEND=Agg --entrypoint sh etl \
+	 	-c 'python -m src.cli.train_baseline \
+	 		--input data/processed/features.parquet \
+	 		--target churned \
+	 		--test-size 0.2 \
+	 		--random-state 42 \
+	 		--outdir artifacts/baseline_v1 && echo ">> baseline artifacts at artifacts/baseline_v1"'
+
+# Pytest for the baseline CLI
+test-baseline:
+	 docker compose run --rm -e MPLBACKEND=Agg --entrypoint sh etl \
+	 	-c 'pytest -q tests/test_baseline_cli.py'
+
+# Sampled run: make train-baseline-sample N=50
+train-baseline-sample:
+	 docker compose run --rm -e MPLBACKEND=Agg --entrypoint sh etl \
+	 	-c 'python -m src.cli.train_baseline \
+	 		--input data/processed/features.parquet \
+	 		--target churned \
+	 		--test-size 0.2 \
+	 		--random-state 42 \
+	 		--sample $(N) \
+	 		--outdir artifacts/baseline_v1_sample_$(N)'
+
+# Monte-Carlo runner (no heredocs)
+N ?= 100
+MC_ITERS ?= 20
+OUTBASE ?= artifacts/mc_baseline
+INPUT ?= data/processed/features.parquet
+TARGET ?= churned
+
+monte-carlo:
+	docker compose run --rm \
+	--entrypoint sh etl -c 'rm -rf $(OUTBASE) && mkdir -p $(OUTBASE) && echo "seed,n,accuracy,precision,recall,f1,roc_auc" > $(OUTBASE)/metrics.csv'
+	@for i in $$(seq 1 $(MC_ITERS)); do \
+	  OUTDIR=$(OUTBASE)/run_$$i; \
+	  echo ">> run seed=$$i N=$(N) -> $$OUTDIR"; \
+	  docker compose run --rm -e MPLBACKEND=Agg --entrypoint sh etl \
+	    -c 'python -m src.cli.train_baseline --input $(INPUT) --target $(TARGET) --test-size 0.2 --random-state '$$i' --sample $(N) --outdir '$$OUTDIR; \
+	  docker compose run --rm --entrypoint sh etl \
+	    -c 'python scripts/mc_append_metrics.py '$$i' $(N) '$$OUTDIR' $(OUTBASE)/metrics.csv'; \
+	done
+	@echo ">> Monte-Carlo complete: $(OUTBASE)/metrics.csv"
+
+# Summary using pandas (no heredocs)
+monte-carlo-summary:
+	 docker compose run --rm --entrypoint sh etl \
+	 	-c 'python -c "import pandas as pd; import sys; df=pd.read_csv(\"$(OUTBASE)/metrics.csv\"); print(df.describe()[[\"accuracy\",\"precision\",\"recall\",\"f1\",\"roc_auc\"]])"'
+
+# identifies best run
+mc-best:
+	docker compose run --rm --entrypoint sh etl -c 'python scripts/mc_best.py --metric $${METRIC:-roc_auc}'
+
+# Pretty-print best_summary.json (created by `make mc-best`)
+mc-show-best:
+	docker compose run --rm --entrypoint sh etl -c '\
+p=artifacts/mc_baseline/best/best_summary.json; \
+if [ -f "$$p" ]; then cat "$$p" | python -m json.tool; \
+else echo "best_summary.json not found. Run: make mc-best"; exit 1; fi'
+
+# Pretty-print metrics.json from the best run
+mc-show-best-metrics:
+	docker compose run --rm --entrypoint sh etl -c '\
+p=artifacts/mc_baseline/best/metrics.json; \
+if [ -f "$$p" ]; then cat "$$p" | python -m json.tool; \
+else echo "best metrics not found. Run: make mc-best"; exit 1; fi'
+
+# List artifacts in the best run folder
+mc-ls-best:
+	docker compose run --rm --entrypoint sh etl -c 'ls -la artifacts/mc_baseline/best'
+
+# -------------------------------------------------------------------
+# artifact checks
+# -------------------------------------------------------------------
+
+# Show metrics.json nicely
+# override default entrypoint/cmd and run our script
+show-metrics:
+	docker compose run --rm --entrypoint sh etl -c 'python scripts/show_metrics.py' \
+	-e MPLBACKEND=Agg -e MPLCONFIGDIR=/tmp/matplotlib -e XDG_CACHE_HOME=/tmp
+
+# List baseline artifacts
+ls-artifacts:
+	docker compose run --rm --entrypoint sh etl -c 'ls -la artifacts/baseline_v1' \
+	-e MPLBACKEND=Agg -e MPLCONFIGDIR=/tmp/matplotlib -e XDG_CACHE_HOME=/tmp

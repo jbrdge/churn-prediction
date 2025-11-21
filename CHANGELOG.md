@@ -4,26 +4,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - 2025-09-10
+## [0.5.0] - 2025-09-12
 ### Added
-- **Schema (Issue 1)**: `churn.customers` (UUID PK + `external_id`, demographics/plan fields, JSONB `attributes`, timestamps) and **`churn.churn_labels`** (PK `(customer_id, label_date)`), indexes and triggers.
-- **Transform Spec & Data Contracts (Issue 2)**: Kaggle-only mapping (`customers.csv`, `churn_labels.csv`) and `docs/data_contracts.md` defining exact headers & types.
-- **Loader (Issue 3)**: `src/pipelines/ingest_csv.py` — env-driven (reads `.env`), supports `--data-dir` and `--full-refresh`; upserts customers by `external_id`; inserts/updates labels; skips label orphans.
-- **Validation (Issue 4)**: `sql/010_validation.sql` covering row counts, orphaned labels, and churn snapshot on the latest `label_date`.
-- **Make targets**: `e2e`, `e2e-v`, `validate`, `validate-all`, plus convenience targets (`db-ready`, `db-psql`, etc.).
-- **README**: Make-centric quick start, sanity checks, and v0.4.0 validation runbook.
+- **Baseline modeling CLI** (`src/cli/train_baseline.py`) with reproducible artifacts:
+  - `model.pkl`, `metrics.json`, `params.json`, `coefficients.csv`, `confusion_matrix.png`, `roc_curve.png`.
+- **Optional sampling** via `--sample N` (deterministic pre-split cap). Value recorded in `params.json`.
+- **Monte Carlo harness**: `make monte-carlo N=<rows> MC_ITERS=<k>` produces `artifacts/mc_baseline/metrics.csv` and per-run artifacts.
+- **Best-run selection**: `scripts/mc_best.py` + `make mc-best [METRIC=roc_auc]` copies best run to `artifacts/mc_baseline/best/` and writes `best_summary.json`.
+- **Helper scripts**: `scripts/archive_to_parquet.py`, `scripts/show_metrics.py`, `scripts/mc_append_metrics.py`, `scripts/docker-env.sh`.
+- **Make targets** only (no raw Python needed): `make-features-from-archive`, `train-baseline`, `train-baseline-sample`, `show-metrics`, `ls-artifacts`, `monte-carlo`, `monte-carlo-summary`, `mc-best`, `mc-show-best`, `mc-show-best-metrics`, `mc-ls-best`.
+- **Headless plotting**: configure Matplotlib backend/cache so PNG plots render in containers.
+- **Permissions UX**: support running containers as host user with `user: "${HOST_UID:-1000}:${HOST_GID:-1000}"` and helper script.
 
 ### Changed
-- Prefer Make targets over raw `docker compose` commands in docs and examples.
-- `counts` Make target now reports only `customers` and `churn_labels`.
+- **Makefile**: added Docker-first targets and removed fragile heredocs; use `--entrypoint sh -c`.
+- **ROC plot**: save via explicit `fig, ax` to avoid blank images in headless runs.
+- **Feature names**: extract from fitted `ColumnTransformer.get_feature_names_out()` for correct one-hot names.
+- **Docs**: README updated to use **Make-only** commands for training and analysis; added Monte Carlo and best-run helpers.
+- **Dependencies**: recommended pins in `requirements.txt` for deterministic runs (pandas, scikit-learn, matplotlib, pyarrow, joblib).
 
 ### Removed
-- **Events**: All references to `events.csv` and `churn.events` (schema, docs, loader, validation) to keep v0.4.0 strictly Kaggle-only.
+- N/A
+
+## [0.4.0] - 2025-09-10
+### Added
+- Schema (`churn.customers`, `churn.churn_labels`), CSV→Postgres loader, validation SQL.
+- Make runbook targets for end-to-end validation.
+### Changed
+- Prefer Make targets over raw `docker compose` in docs/examples.
+### Removed
+- Events pipeline (kept v0.4.0 strictly Kaggle-only).
 
 ## [0.3.0] - 2025-09-06
 ### Added
-- Docker Compose stack (Python app + Postgres), health checks, and Make targets.
-- Basic CLI health probe.
+- Docker Compose stack (Python app + Postgres), health checks, Make targets.
 
 ## [0.2.0] - 2025-09-05
 ### Added

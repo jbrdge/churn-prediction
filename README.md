@@ -1,10 +1,12 @@
 # Customer Churn Prediction
 
-![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)
 ![Build](https://github.com/jbrdge/churn-prediction/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-End-to-end churn workflow, built incrementally. As of **v0.4.0**, the project ships a **reproducible Docker dev environment** (Python + PostgreSQL), a CSV→Postgres ETL loader, and a validation runbook.
+This is a learning project, I used AI assisted templates for code to review MLOps Concepts. I performed the planning of the project as if I were a project manager creating milestones, issues, PRs, actions, labels, code reviews, etc. It is an ongoing and I plan to expand it as I learn.
+
+End-to-end churn workflow, built incrementally. As of **v0.5.0**, the project ships a **reproducible baseline model** CLI (Logistic Regression), artifact persistence, optional sampling, a Monte Carlo harness, and Docker UX fixes. Earlier versions provided Dockerized ETL + validation.
 
 ---
 
@@ -23,21 +25,21 @@ Developer (Make/Compose)
          +---+ (POSTGRES_*; DATABASE_URL)
 ```
 
-- **Python 3.11** (lean runtime): SQLAlchemy + psycopg v3
+- **Python 3.11** (lean runtime): SQLAlchemy + psycopg v3, scikit-learn, pandas, matplotlib
 - **PostgreSQL 16 (alpine)** with `pg_isready` healthcheck
 - **Docker Compose** for orchestration
-- **Makefile** for all workflows (build, load, validate, clean, etc.)
+- **Makefile** for all workflows (build, load, train, validate, clean, etc.)
 - **pre-commit + GitHub Actions** for formatting, linting, and notebook output stripping
 
 ---
 
-## Quick Start (Docker + Make, recommended)
+## Quick Start (Docker + Make only)
 
 ```bash
 # 1) Clone and configure env
 git clone https://github.com/jbrdge/churn-prediction.git
 cd churn-prediction
-cp .env.example .env   # contains POSTGRES_* keys
+cp .env.example .env
 
 # 2) Start the stack
 make up
@@ -52,98 +54,83 @@ make health
 
 ---
 
-## First-Time Sanity Check
+## Baseline Model (v0.5.0)
 
-Run these to confirm everything is wired correctly—only uses Make targets.
+This release adds a reproducible Logistic Regression baseline trained on a Parquet features file.
 
-```bash
-make db-ready-verbose   # show DB env + readiness
-make health             # app health check (DB ping)
-make db-psql            # list databases inside Postgres
-make schema             # apply schema
-make etl                # load sample CSVs
-make validate           # run validation SQL
-make app-psql           # cross-container DB access
-```
+### Build features parquet
 
-**Expected outputs**
-- DB readiness shows `exit=0`
-- Health prints “DB connectivity: OK”
-- DB lists include `churn`
-- Validate prints row counts, orphaned labels = 0, churn snapshot
-- App psql lists churn tables (`customers`, `churn_labels`)
-
----
-
-## Configuration
-
-Provide DB settings in `.env` (not committed):
-
-```env
-POSTGRES_DB=churn
-POSTGRES_USER=churn_user
-POSTGRES_PASSWORD=churn_pass
-```
-
-The app also exposes `DATABASE_URL` inside the container (via compose):
-
-```
-postgresql+psycopg://churn_user:churn_pass@db:5432/churn
-```
-
----
-
-## Development Workflow
-
-Most tasks can be run with `make`:
+Use the Kaggle **Telco Customer Churn** CSV to produce the features file:
 
 ```bash
-make up         # build & start all services
-make down       # stop
-make down-v     # stop + remove volumes (wipe DB data)
-make ps         # container status
-make logs       # follow logs
-make app-sh     # shell into app container
-make db-sh      # shell into db container
-make db-psql    # psql inside db container
-make app-psql   # psql from app container -> db
-make db-ready   # check readiness
-make health     # run health check
-make schema     # apply schema (sql/001_schema.sql)
-make etl        # run ETL loader
-make validate   # run validation SQL
-make e2e        # end-to-end (schema + etl + validate)
-make e2e-v      # verbose end-to-end (includes validate-all)
+# full dataset
+make make-features-from-archive
+
+# or a faster sampled parquet for smoke tests
+make make-features-from-archive N=500
 ```
 
-**Cleaning / Resetting**
+### Train and inspect
+
 ```bash
-make clean      # stop containers + wipe volumes (fresh DB)
-make reset      # clean + bring db back up
-make nuke       # full reset (remove images, data, pycaches)
+# Train baseline (Logistic Regression)
+make train-baseline
+
+# Inspect artifacts / metrics
+make ls-artifacts
+make show-metrics
 ```
 
-**pre-commit**
+Artifacts (under `artifacts/baseline_v1/`):
+- `model.pkl` — serialized model
+- `metrics.json` — accuracy, precision, recall, F1, ROC-AUC
+- `params.json` — hyperparameters, seed, feature lists, sample_n
+- `coefficients.csv` — model weights with one-hot expanded names
+- `confusion_matrix.png`, `roc_curve.png`
+
+### Sampling for speed
+
+Cap training rows deterministically (before the split):
+
 ```bash
-make hooks       # install git hooks
-make hooks-run   # run hooks now
-make hooks-update
+make train-baseline-sample N=100
 ```
 
----
+### Monte Carlo (optional)
 
-## Dataset
+Stress-test stability by varying seed and (optionally) the sample size:
 
-Telco Customer Churn (Kaggle):
-<https://www.kaggle.com/datasets/blastchar/telco-customer-churn>
 
-Columns include churn label, subscribed services, tenure/contract/billing, and demographics.
+
+```bash
+make monte-carlo N=50 MC_ITERS=10
+make monte-carlo-summary
+```
+
+Pick and promote the **best** run’s artifacts by a chosen metric (default: `roc_auc`):
+
+```bash
+make mc-best
+make mc-show-best           # pretty-print best_summary.json
+make mc-show-best-metrics   # pretty-print metrics.json from best run
+make mc-ls-best             # list files in best run folder
+```
+
+### Best-of Artifacts (tracked)
+
+The following images and metrics are committed from the **best run** for reproducibility:
+
+- ![Confusion Matrix](artifacts/mc_baseline/best/confusion_matrix.png)
+- ![ROC Curve](artifacts/mc_baseline/best/roc_curve.png)
+- [`metrics.json`](artifacts/mc_baseline/best/metrics.json)
+- [`params.json`](artifacts/mc_baseline/best/params.json)
+- [`coefficients.csv`](artifacts/mc_baseline/best/coefficients.csv)
 
 ---
 
 ## v0.4.0 — Validation Runbook
 
-End-to-end validation workflow:
+End-to-end validation workflow (from DB schema + CSVs → checks).
 
 ```bash
 make e2e      # schema + load + validate
@@ -163,7 +150,7 @@ make e2e-v    # verbose variant (includes validate-all)
 - ✅ **[0.2.0] Repo Structure** — standardized Python/SQL layout, env templates
 - ✅ **[0.3.0] Docker Compose** — Dockerfile + compose (Postgres), health checks, Make targets
 - ✅ **[0.4.0] SQL ETL + Validation** — schema creation, CSV ingest CLI, validation runbook
-- ⏳ **[0.5.0] Baseline Model** — modeling CLI, artifacts & metrics
+- ✅ **[0.5.0] Baseline Model** — modeling CLI, artifacts & metrics, sampling, Monte Carlo
 - ⏳ **[0.6.0] Tableau Dashboard** — publish dashboard; link from README
 
 See details in [CHANGELOG.md](CHANGELOG.md).
